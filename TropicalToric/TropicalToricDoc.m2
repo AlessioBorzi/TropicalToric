@@ -124,7 +124,7 @@ doc ///
   Description
     Text
         This function calculates a toric cycle which class is the same of a subvariety of a
-        normal toric variety X, under the hypothesis that X is smooth. The subvariety is given
+        normal toric variety X, under the hypothesis that X is simplicial. The subvariety is given
         by the ideal of its intersection with the torus inside X.
     Example
         X = toricProjectiveSpace 3;
@@ -158,6 +158,9 @@ doc ///
         Y is the intersection of V(J) and V(I) inside the torus of X. The purpose of this function is
         essentially the same as classFromTropical, but it is optimized to this particular setting. Note that
         the closure of V(I) inside X is a wonderful compactification of V(I).
+    Text
+        It is possible to explicitely input the toric variety, and this allows to implicitly specify the building set
+        of the wonderful compactification.
     Text
         A remarkable example among these is the moduli space of n-marked genus 0 curves M_0,n.
         Below, we use this function on M_0,6 to compute one of the 15 Keel-Vermeire divisors.
