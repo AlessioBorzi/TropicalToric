@@ -93,7 +93,7 @@ poincareMatrix (NormalToricVariety,ZZ) := (X,k) -> (
     );
     M = append(M,M');
   );
-  M = lift(matrix M,QQ);
+  M = promote(matrix M,QQ);
   X.cache#(symbol PoincareMatrix, k) = M;
   M
 );
@@ -110,7 +110,7 @@ poincareDuality (List,NormalToricVariety,ZZ) := (l, X, k) -> (
   Y := flatten entries transpose solve(M,v)
 );
 
---input: A smooth toric variety X, an ideal I in the Laurent polynomial ring
+--input: A simplicial toric variety X, an ideal I in the Laurent polynomial ring
 --output: a toric cycle whose class is the class of the closure of V(I) in X
 classFromTropical = method(TypicalValue => ToricCycle)
 classFromTropical (NormalToricVariety,Ideal) := (X, I) -> (
@@ -124,7 +124,8 @@ classFromTropical (NormalToricVariety,Ideal) := (X, I) -> (
   prod := pushforwardMultiplicity(X,X',mult,k);
   --apply Poincare duality
   Y := poincareDuality(prod,X,k);
-  O := orbits(X,k);
+  m := #(max X)_0;
+  O := orbits(X,dim X-(m-k));
   D := sum apply(#O, s -> Y_s * X_(O_s));
   return D
 );
