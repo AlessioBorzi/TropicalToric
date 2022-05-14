@@ -2,7 +2,7 @@ doc ///
     Key
     	TropicalToric
     Headline
-    	M2 package for tropical methods on toric intersection theory
+    	Macaulay2 package for toric intersection theory using tropical geometry.
     Description
     	Text
           This package implements the computations of classes in the
