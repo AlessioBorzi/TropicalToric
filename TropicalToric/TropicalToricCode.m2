@@ -3,7 +3,7 @@
 --       a list l of weights of the maximal cones of T.
 --output: list of weights, indexed by the cones of X, induced by T
 refineMultiplicity = method(TypicalValue => List)
-refineMultiplicity (List, Fan, NormalToricVariety) := (l,T,X) -> (
+refineMultiplicity (List, Fan, NormalToricVariety) := (l,T,X) ->(
   k := dim T;
   n := dim X;
   if #(unique l) == 1 then(
@@ -25,7 +25,7 @@ refineMultiplicity (List, Fan, NormalToricVariety) := (l,T,X) -> (
   );
   return mult
 );
-refineMultiplicity (TropicalCycle, NormalToricVariety) := (T,X) -> (
+refineMultiplicity (TropicalCycle, NormalToricVariety) := (T,X) ->(
   return refineMultiplicity(multiplicities T,fan T,X)
 )
 
@@ -38,7 +38,7 @@ refineMultiplicity (TropicalCycle, NormalToricVariety) := (T,X) -> (
 -- From the projection formula, the resulting Minkowski weight on X corresponds
 -- to the pushforward phi_* [Y']
 pushforwardMultiplicity = method(TypicalValue => List)
-pushforwardMultiplicity (NormalToricVariety,NormalToricVariety,List,ZZ) := (X,X',mult,k) -> (
+pushforwardMultiplicity (NormalToricVariety,NormalToricVariety,List,ZZ) := (X,X',mult,k) ->(
   n := dim X;
   d := #rays X;
   phi := map(X,X',id_(ZZ^n));
@@ -68,7 +68,7 @@ pushforwardMultiplicity (NormalToricVariety,NormalToricVariety,List,ZZ) := (X,X'
 --        where m is the largest integer such that A^m(X) is not zero.
 --        The output is cached in X
 poincareMatrix = method (TypicalValue => Matrix)
-poincareMatrix (NormalToricVariety,ZZ) := (X,k) -> (
+poincareMatrix (NormalToricVariety,ZZ) := (X,k) ->(
   if X.cache#?(PoincareMatrix,k) then(
     return X.cache#(PoincareMatrix,k);
   );
@@ -104,7 +104,7 @@ poincareMatrix (NormalToricVariety,ZZ) := (X,k) -> (
 --        where m is the maximum codimension such that A^m(X) is not zero
 --        ( recall that A^k(X) corresponds to orbits(X,n-k) )
 poincareDuality = method(TypicalValue => List)
-poincareDuality (List,NormalToricVariety,ZZ) := (l, X, k) -> (
+poincareDuality (List,NormalToricVariety,ZZ) := (l, X, k) ->(
   M := poincareMatrix(X,k);
   v := promote(transpose matrix {l},QQ);
   Y := flatten entries transpose solve(M,v)
@@ -113,7 +113,7 @@ poincareDuality (List,NormalToricVariety,ZZ) := (l, X, k) -> (
 --input: A simplicial toric variety X, an ideal I in the Laurent polynomial ring
 --output: a toric cycle whose class is the class of the closure of V(I) in X
 classFromTropical = method(TypicalValue => ToricCycle)
-classFromTropical (NormalToricVariety,Ideal) := (X, I) -> (
+classFromTropical (NormalToricVariety,Ideal) := (X, I) ->(
   T := tropicalVariety(I);
   k := dim T;
   F := gfanFanCommonRefinement(fan X, fan T); --common refinement
@@ -170,7 +170,7 @@ classWonderfulCompactification (Ideal, RingElement) := (I,f) ->(
 -- Then we have  R \simeq (S_(x_0*...*x_n))_0
 -- here we are viewing the torus T in X as X \ V(x_0*...*x_n) = X \ (union of D_i's)
 torusIntersection = method()
-torusIntersection (NormalToricVariety,RingElement,Ring) := (X,g,TR) -> (
+torusIntersection (NormalToricVariety,RingElement,Ring) := (X,g,TR) ->(
   n := dim X;
   R := matrix rays X;
   l := new List;
@@ -191,17 +191,17 @@ torusIntersection (NormalToricVariety,RingElement,Ring) := (X,g,TR) -> (
   l = transpose (l-L);
   --from the exponents to the polynomial
   f := sum apply(#l, i ->
-    ((listForm g)_i)_1 * product apply( n, j -> (TR_j)^((l_i)_j) )
+    ((listForm g)_i)_1 * product apply( n, j ->(TR_j)^((l_i)_j) )
   );
   return f
 );
-torusIntersection (NormalToricVariety,RingElement) := (X,g) -> (
+torusIntersection (NormalToricVariety,RingElement) := (X,g) ->(
   n := dim X;
   y := symbol y;
   TR:= QQ[y_1..y_n]; --torus ring
   return torusIntersection(X,g,TR)
 );
-torusIntersection (NormalToricVariety,Ideal,Ring) := (X,I,TR) -> (
+torusIntersection (NormalToricVariety,Ideal,Ring) := (X,I,TR) ->(
   G := new List;
   for g in flatten entries (gens I) do(
     G = append(G, torusIntersection(X,g,TR));
@@ -213,7 +213,7 @@ torusIntersection (NormalToricVariety,Ideal,Ring) := (X,I,TR) -> (
   );
   return G
 );
-torusIntersection (NormalToricVariety,Ideal) := (X,I) -> (
+torusIntersection (NormalToricVariety,Ideal) := (X,I) ->(
   n := dim X;
   y := symbol y;
   TR:= QQ[y_1..y_n]; --torus ring

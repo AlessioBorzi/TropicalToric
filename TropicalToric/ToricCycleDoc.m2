@@ -271,6 +271,33 @@ doc ///
 
 doc ///
   Key
+    (symbol *, ToricCycle, ToricCycle)
+  Headline
+    intersection product of two toric cycles
+  Usage
+    D*C
+  Inputs
+    D: ToricCycle
+    C: ToricCycle
+  Description
+    Text
+        Computes the intersection product of a ToricCycle with another ToricCycle.
+    Example
+        X = toricProjectiveSpace 5
+        D = X_{0,1}+5*X_{1,3}-X_{2}+2*X_{3}
+        C = X_{2,3}
+        D*C
+    Text
+        Self intersection of the exceptional divisor.
+    Example
+        X = toricProjectiveSpace 2
+        Y = toricBlowup({0,1},X)
+        D = Y_{3}
+        D*D
+///
+
+doc ///
+  Key
     (symbol +, ToricCycle, ToricCycle)
     (symbol -, ToricCycle, ToricCycle)
     (symbol -, ToricCycle)

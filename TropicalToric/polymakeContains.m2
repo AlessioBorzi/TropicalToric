@@ -1,5 +1,5 @@
 polymakeConeContains = method(TypicalValue => Boolean)
-polymakeConeContains (List, List) := (v,C) -> (
+polymakeConeContains (List, List) := (v,C) ->(
   --v is a list
   --C is a list
   v = toExternalString v;

@@ -6,7 +6,7 @@ debug Core --- kludge to access "hasAttribute" and getAttribute
 -- Expression
 ------------------------------------------------------------------------------
 
-expression ToricCycle := Expression => C -> (
+expression ToricCycle := Expression => C ->(
   X := variety C;
   divisorSymbol :=
     if hasAttribute(X,ReverseDictionary) then
@@ -16,7 +16,7 @@ expression ToricCycle := Expression => C -> (
   S := support C;
   if S == {} then
     return expression 0;
-  Sum apply(S, j -> (
+  Sum apply(S, j ->(
     coeff := expression abs(C#j);
     if C#j == -1 then
       Minus Subscript{divisorSymbol, j}
@@ -31,7 +31,7 @@ expression ToricCycle := Expression => C -> (
 
 net ToricCycle := C -> net expression C
 ToricCycle#{Standard,AfterPrint} =
-ToricCycle#{Standard,AfterNoPrint} = C -> (
+ToricCycle#{Standard,AfterNoPrint} = C ->(
     << endl; -- double space
     << concatenate(interpreterDepth:"o") << lineNumber << " : ToricCycle on ";
     << variety C << endl;
@@ -46,14 +46,14 @@ variety ToricCycle := C -> C.variety;
 support ToricCycle := C -> C.cycleSupport;
 
 toricCycle = method(TypicalValue => ToricCycle)
-toricCycle (List, List, NormalToricVariety) := (L,S,X) -> (
+toricCycle (List, List, NormalToricVariety) := (L,S,X) ->(
   new ToricCycle from L | {
     symbol variety => X,
     symbol cycleSupport => S,
     symbol cache => new CacheTable
   }
 );
-toricCycle (List, NormalToricVariety) := (L,X) -> (
+toricCycle (List, NormalToricVariety) := (L,X) ->(
   S := new List;
   for t in L do (
     if t#1 != 0 then(
@@ -65,7 +65,7 @@ toricCycle (List, NormalToricVariety) := (L,X) -> (
   toricCycle(L,S,X)
 );
 
-ToricCycle _ List := ToricCycle => (D,L) -> (
+ToricCycle _ List := ToricCycle => (D,L) ->(
   if member(L,keys D) then(
     return D#L
   ) else(
@@ -75,12 +75,12 @@ ToricCycle _ List := ToricCycle => (D,L) -> (
 
 ToricCycle _ ZZ := ToricCycle => (D,i) -> D_{i};
 
-NormalToricVariety _ List := (X,L) -> (
+NormalToricVariety _ List := (X,L) ->(
   S := {sort L};
   toricCycle({S_0 => 1}, S, X)
 );
 
-toricCycle(ToricDivisor) := D -> (
+toricCycle(ToricDivisor) := D ->(
     X := variety D;
     L := for i from 0 to #rays X - 1 list ( {i}, (entries D)#i );
     toricCycle(L,X)
@@ -88,12 +88,12 @@ toricCycle(ToricDivisor) := D -> (
 
 toricCycle(ToricCycle) := D -> D;
 
-ToricCycle == ToricCycle := Boolean => (D,E) -> (
+ToricCycle == ToricCycle := Boolean => (D,E) ->(
     return variety D === variety E and (for orbit in sort support(D) list D#orbit)==(for orbit in sort support(E) list E#orbit);
 );
 
 toricDivisorFromCycle = method(TypicalValue => ToricDivisor)
-toricDivisorFromCycle(ToricCycle) := ToricDivisor => (D) -> (
+toricDivisorFromCycle(ToricCycle) := ToricDivisor => (D) ->(
   X := D.variety;
   L := apply(#(rays X), i -> D_i);
   return toricDivisor(L,X)
@@ -103,22 +103,22 @@ toricDivisorFromCycle(ToricCycle) := ToricDivisor => (D) -> (
 -- Addition and scalar multiplication
 ------------------------------------------------------------------------------
 
-QQ * ToricCycle := ToricCycle => (k,C) -> (
+QQ * ToricCycle := ToricCycle => (k,C) ->(
     if k == 0 then(
         return toricCycle({},variety C)
     );
-    L := apply(support C, s-> (s => k*C_s) );
+    L := apply(support C, s->(s => k*C_s) );
     toricCycle(L, support C, variety C)
 );
-ZZ * ToricCycle := ToricCycle => (k,C) -> ( promote(k,QQ) * C );
+ZZ * ToricCycle := ToricCycle => (k,C) ->( promote(k,QQ) * C );
 
 -- Extend the multiplication of toric divisors
-QQ * ToricDivisor := ToricDivisor => (q,D) -> (
+QQ * ToricDivisor := ToricDivisor => (q,D) ->(
     X := variety D;
     toricDivisor (apply (# rays X, i -> q*D#i), X)
 );
 
-ToricCycle + ToricCycle := ToricCycle => (C,D) -> (
+ToricCycle + ToricCycle := ToricCycle => (C,D) ->(
     --assert(variety C === variety D);
     U := toList(set support(C) + set support(D));
     S := new List;
@@ -136,21 +136,21 @@ ToricCycle + ToricCycle := ToricCycle => (C,D) -> (
     toricCycle(L,S,variety C)
 );
 
-ToricCycle - ToricCycle := ToricCycle => (C,D) -> (C + (-1)*D);
+ToricCycle - ToricCycle := ToricCycle => (C,D) ->(C + (-1)*D);
 
-- ToricCycle := ToricCycle => (C) -> (-1)*C
+- ToricCycle := ToricCycle => (C) ->(-1)*C
 
-ToricDivisor + ToricCycle := ToricCycle => (D,C) -> (toricCycle(D) + C);
-ToricDivisor - ToricCycle := ToricCycle => (D,C) -> (toricCycle(D) - C);
-ToricCycle + ToricDivisor := ToricCycle => (C,D) -> (D+C);
-ToricCycle - ToricDivisor := ToricCycle => (C,D) -> (-(D-C));
+ToricDivisor + ToricCycle := ToricCycle => (D,C) ->(toricCycle(D) + C);
+ToricDivisor - ToricCycle := ToricCycle => (D,C) ->(toricCycle(D) - C);
+ToricCycle + ToricDivisor := ToricCycle => (C,D) ->(D+C);
+ToricCycle - ToricDivisor := ToricCycle => (C,D) ->(-(D-C));
 
 ------------------------------------------------------------------------------
 -- Intersection product
 ------------------------------------------------------------------------------
 
 isTransverse = method(TypicalValue => Boolean)
-isTransverse(ToricDivisor, List) := (D,E) -> (
+isTransverse(ToricDivisor, List) := (D,E) ->(
     -- the first set is support D
     #( set( select( #(rays variety D), i -> D#i != 0) ) * set(E) ) == 0
 );
@@ -158,7 +158,7 @@ isTransverse(ToricDivisor, List) := (D,E) -> (
 --input: toric divisor D and a list C
 --output: a toric divisor D' linearly equivalent to D such that its support and C are disjoint
 makeTransverse = method(TypicalValue => ToricDivisor)
-makeTransverse (ToricDivisor, List) := (D,C) -> (
+makeTransverse (ToricDivisor, List) := (D,C) ->(
   X := variety D;
   d := #(rays X); -- number of rays of X
   n := dim X;
@@ -213,10 +213,10 @@ makeTransverse (ToricDivisor, List) := (D,C) -> (
   toricDivisor(D,X)
 );
 
--- We assume that X and has no torus factors and is simplicial
+-- We assume that X has no torus factors and is simplicial
 -- input: a divisor D on X, a cone C in the fan of X
 -- output: a cycle equivalent to D * X_C
-ToricDivisor * List := (D, C) -> (
+ToricDivisor * List := (D, C) ->(
     -- if not(isQQCartier(D)) then
     --   error "--the divisor is not QQCartier";
     X := variety D;
@@ -257,11 +257,11 @@ ToricDivisor * List := (D, C) -> (
     return toricCycle(V,X)
 );
 
-ToricDivisor * ToricDivisor := (D,E) -> (
+ToricDivisor * ToricDivisor := (D,E) ->(
     D * toricCycle E
 );
 
-ToricDivisor * ToricCycle := (D,C) -> (
+ToricDivisor * ToricCycle := (D,C) ->(
     if support C == {} then
       return C;
     sum ( for c in support C list ((C#c) * (D*c)) )
@@ -269,12 +269,27 @@ ToricDivisor * ToricCycle := (D,C) -> (
 
 ToricCycle * ToricDivisor := (C,D) -> D*C;
 
+ToricCycle * ToricCycle := (C,D) ->(
+  --assert(variety C === variety D);
+  X := variety D;
+  E := toricCycle({},{},X); --resulting cycle
+  for d in support D do(
+    V := C; --auxiliary cycle
+    for i in d do(
+      V = X_i * V;
+    );
+    V = (D#d) * V;
+    E = E + V;
+  );
+  return E;
+);
+
 ------------------------------------------------------------------------------
 -- Degree
 ------------------------------------------------------------------------------
 
 degCycle = method(TypicalValue => ZZ)
-degCycle (ToricCycle) := C -> (
+degCycle (ToricCycle) := C ->(
   X := variety C;
   if not(support C == {}) and #(max X)_0 == #(support C)_0 then(
       return sum apply(support C, c -> C#c);
